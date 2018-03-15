@@ -1,0 +1,16 @@
+produce transaction format: supplier type ID transaction_type produce_time weight source_count [type ID][+]
+shipped transaction format: supplier type ID transaction_type shipped_time transportation_temp transportation_comp destination_supplier package_info
+arrived transaction format: supplier type ID transaction_type arrived_time signed_name
+stored  transaction format: supplier type ID transaction_type stored_time stored_temp
+terminated transact format: supplier type ID transaction_type terminated_time reason
+
+tomato tomato 0 produced 0 500g 0
+tomato tomato 1 produced 10 500g 0
+tomato tomato 0 shipped 20 25 ups sauce non-prime
+tomato tomato 1 stored 30 10
+sauce tomato 0 arrived 110 John
+sauce sauce 0 produced 130 100g 1 tomato 0
+tomato tomato 1 shipped 140 20 ups sauce prime
+sauce tomato 1 arrived 160 John
+sauce sauce 0 terminated 170 sold
+sauce sauce 1 produced 190 100g 1 tomato 1
