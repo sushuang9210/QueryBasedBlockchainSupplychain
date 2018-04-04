@@ -28,7 +28,7 @@ class SingleThread(threading.Thread):
     def run(self):
 	    w = Web3(HTTPProvider(address[self.index]))
 	    transactionSearch = w.eth.contract(json.loads(abi), contractAddress, ContractFactoryClass=ConciseContract)
-        print Web3.toInt(transactionSearch.getTransactions(1,1,1)),time.time()-start
+        print Web3.toInt(transactionSearch.getProductInfo(1,1,1)),time.time()-start
 
 start=time.time()
 for i in range(20):

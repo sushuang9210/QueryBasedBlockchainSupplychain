@@ -8,21 +8,17 @@ __email__ = 'shuangs@andrew.cmu.edu'
 pragma solidity ^0.4.2;
 contract TransactionSearch
 {
-    struct latestInfo{uint state;uint time;}
-
-    mapping (uint => mapping (uint => latestInfo)) latestState;
     mapping (uint => mapping (uint => mapping(uint => uint))) ChainData;
-    mapping (uint => mapping (uint => uint)) stateTransition;
+    struct latestInfo{uint state;uint time;}
+    mapping (uint => mapping (uint => latestInfo)) latestState;
+    mapping (uint => uint[]) stateTransition;
     mapping (uint => mapping (uint => uint)) destination;
     mapping (address => uint) owner;
 
     function TransactionSearch(){
-        stateTransition[1][2]=1;
-        stateTransition[1][4]=1;
-        stateTransition[1][5]=1;
-        stateTransition[2][3]=1;
-        stateTransition[4][2]=1;
-        stateTransition[4][5]=1;
+        stateTransition[1]=[2,4,5];
+        stateTransition[2]=[3];
+        stateTransition[4]=[2,5];
 	owner[0xfe94e15661e44d0fd6189adf2d3998d0c61ff201]=1;
 	owner[0x2e42c0a3731788b51c195bd19b5eb0f0d7edbebd]=2;
 	owner[0xf654a89e43c5b070ea8d3688e80396684f5d8856]=3;
@@ -45,48 +41,50 @@ contract TransactionSearch
 	owner[0xde221147b4a1242b0b6b6d535b5e2b37e8683809]=20;
     }
 
-    function setTransactionAtom(uint _name,uint _id, uint _state, uint _time, uint _info)
+    function setProductInfoAtom(uint _name,uint _id, uint _state, uint _time, uint _info)
     {
 	      ChainData[_name][_id][_state]=_info*100000000+_time;
         latestState[_name][_id]=latestInfo({state:_state,time:_time});
     }
 
-     function setProduceTransaction(uint _name, uint _id, uint _state, uint _time, uint _weight, uint _pType1, uint _pId1, uint _pType2, uint _pId2)
+     function setProduceProductInfo(uint _name, uint _id, uint _state, uint _time, uint _weight, uint _pType1, uint _pId1, uint _pType2, uint _pId2)
     {
 	if(owner[msg.sender]==_name){
          if(ChainData[_name][_id][_state]==0){
                 if(_state==1)
                {
 		    var _info=_weight*10000000000+_pType1*100000000+_pId1*100000+_pType2*1000+_pId2;
-		    if(_pType1==6) setTransactionAtom(_name, _id, _state, _time, _info);
+		    if(_pType1==6) setProductInfoAtom(_name, _id, _state, _time, _info);
                     else if(latestState[_pType1][_pId1].state==3){
-                    if(_pType2==6) {setTransactionAtom(_name, _id, _state, _time, _info);setTransactionAtom(_pType1, _pId1, 5, _time, _info);}
-		    else if(latestState[_pType2][_pId2].state==3){setTransactionAtom(_name, _id, _state, _time, _info);setTransactionAtom(_pType1, _pId1, 5, _time, _info);setTransactionAtom(_pType2, _pId2, 5, _time, _info);}
+                    if(_pType2==6) {setProductInfoAtom(_name, _id, _state, _time, _info);setProductInfoAtom(_pType1, _pId1, 5, _time, _info);}
+		    else if(latestState[_pType2][_pId2].state==3){setProductInfoAtom(_name, _id, _state, _time, _info);setProductInfoAtom(_pType1, _pId1, 5, _time, _info);setProductInfoAtom(_pType2, _pId2, 5, _time, _info);}
                 }
         }}
      }
 }
 
-    function setTransaction(uint _name, uint _id, uint _state, uint _time, uint _check, uint _info)
+    function setProductInfo(uint _name, uint _id, uint _state, uint _time, uint _check, uint _info)
     {
          if(ChainData[_name][_id][_state]==0){
-              if(stateTransition[uint(latestState[_name][_id].state)][_state]==1)
+           for(uint i=0;i<stateTransition[uint(latestState[_name][_id].state)].length;i++){
+              if(stateTransition[uint(latestState[_name][_id].state)]==_state)
                 {
                 if(_time>latestState[_time][_id].time){
                         if(_state==3){
                                 if(owner[msg.sender]==destination[_name][_id])
-                                        {setTransactionAtom(_name, _id, _state, _time, _info*100+_check);}}
+                                        {setProductInfoAtom(_name, _id, _state, _time, _info*100+_check);}}
                         else{
 			if(owner[msg.sender]==_name){
 			if(_state==2)
-				{setTransactionAtom(_name, _id, _state, _time, _info*100+_check);destination[_name][_id]=_check;}
-                        else{ setTransactionAtom(_name, _id, _state, _time, _info);}}}
+				{setProductInfoAtom(_name, _id, _state, _time, _info*100+_check);destination[_name][_id]=_check;}
+                        else{ setProductInfoAtom(_name, _id, _state, _time, _info);}}}
                 }
                 }
+              }
         }
 }
 
-function getTransactions(uint _name, uint _id, uint _state) view public returns (uint)
+function getProductInfo(uint _name, uint _id, uint _state) view public returns (uint)
     {   return ChainData[_name][_id][_state];
     }
 }
