@@ -750,4 +750,4 @@ def next_transaction(beefPatty,chickenPatty,bacon,buns,pickles,lettuce,cheese,ke
 
 
 if __name__ == '__main__':
-    data_gen(seed=11, n_trans=100000, ave_trans_interval=10)
+    data_gen(seed=11, n_trans=1000000, ave_trans_interval=10)

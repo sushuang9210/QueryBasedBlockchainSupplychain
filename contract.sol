@@ -8,7 +8,7 @@ __email__ = 'shuangs@andrew.cmu.edu'
 pragma solidity ^0.4.2;
 contract TransactionSearch
 {
-    mapping (uint => mapping (uint => mapping(uint => uint))) ChainData;
+    mapping (uint => mapping (uint => mapping(uint => uint))) productHistory;
     struct latestInfo{uint state;uint time;}
     mapping (uint => mapping (uint => latestInfo)) latestState;
     mapping (uint => uint[]) stateTransition;
@@ -43,14 +43,14 @@ contract TransactionSearch
 
     function setProductInfoAtom(uint _name,uint _id, uint _state, uint _time, uint _info)
     {
-	      ChainData[_name][_id][_state]=_info*100000000+_time;
+	      productHistory[_name][_id][_state]=_info*100000000+_time;
         latestState[_name][_id]=latestInfo({state:_state,time:_time});
     }
 
      function setProduceProductInfo(uint _name, uint _id, uint _state, uint _time, uint _weight, uint _pType1, uint _pId1, uint _pType2, uint _pId2)
     {
 	if(owner[msg.sender]==_name){
-         if(ChainData[_name][_id][_state]==0){
+         if(productHistory[_name][_id][_state]==0){
                 if(_state==1)
                {
 		    var _info=_weight*10000000000+_pType1*100000000+_pId1*100000+_pType2*1000+_pId2;
@@ -65,7 +65,7 @@ contract TransactionSearch
 
     function setProductInfo(uint _name, uint _id, uint _state, uint _time, uint _check, uint _info)
     {
-         if(ChainData[_name][_id][_state]==0){
+         if(productHistory[_name][_id][_state]==0){
            for(uint i=0;i<stateTransition[uint(latestState[_name][_id].state)].length;i++){
               if(stateTransition[uint(latestState[_name][_id].state)]==_state)
                 {
@@ -85,6 +85,6 @@ contract TransactionSearch
 }
 
 function getProductInfo(uint _name, uint _id, uint _state) view public returns (uint)
-    {   return ChainData[_name][_id][_state];
+    {   return productHistory[_name][_id][_state];
     }
 }
