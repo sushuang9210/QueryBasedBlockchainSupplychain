@@ -11,7 +11,7 @@ cd dataGenerator
 python main.py
 
 4. send supply chain data to blockchain:
-node sender.js
+python sender.py
 
 5. query:
 python query.py
